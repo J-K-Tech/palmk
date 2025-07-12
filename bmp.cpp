@@ -42,7 +42,7 @@ Image* toBMP(ImageRAW* img){
 	BMP->info.planes=1;
 	BMP->info.bits=24;
 	BMP->info.compression=0;
-	BMP->info.size=datas;
+	BMP->info.imgsize=datas;
 	BMP->info.xppm=0;
 	BMP->info.yppm=0;
 	BMP->info.used=0;

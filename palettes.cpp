@@ -1,38 +1,36 @@
 #include"bmp.h"
 #include"colormani.h"
 #include"raw.h"
-ImageRAW* genpalette(char r,char g,char b) {
-    int cols=(1<<r)*(1<<g)*(1<<b);
-    int w=(int)sqrt(cols*1.5);
-    float deg=360.0f/w;
-    int h=(cols+w-1)/w;
-    if (w<16)w=16;
-    if (h<16)h=16;
-	printf("r-g-b %d-%d-%d\ncolors: %d\nsize: %dx%d\n",r,g,b,cols,w,h);
-	
-    ImageRAW* img=new ImageRAW(w,h);
-    
-    for (int y=0; y<h; y++) {
-        for (int x=0; x<w; x++) {
-            float hue=(float)x*deg;
-            float brightness=1.0f-(float)y/(h-1);
-            float saturation,value;
-            
-            if (brightness>0.5f) {
-                saturation=2.0f*(1.0f-brightness);
-                value=1.0f;
-            } else {
-                saturation=1.0f;
-                value=brightness*2.0f;
+ImageRAW* genpalette(char r, char g, char b) {
+    int rbits = 1 << r;
+    int gbits = 1 << g;
+    int bbits = 1 << b;
+    int cols = rbits * gbits * bbits;
+    int w = (int)sqrt(cols * 1.5);
+    if (w < 16) w = 16;
+    int h = (cols + w - 1) / w;
+    if (h < 16) h = 16;
+
+    printf("r-g-b %d-%d-%d\ncolors: %d\nsize: %dx%d\n", r, g, b, cols, w, h);
+    ImageRAW* img = new ImageRAW(w, h);
+
+    int i = 0;
+    for (int ri = 0; ri < rbits; ri++) {
+        for (int gi = 0; gi < gbits; gi++) {
+            for (int bi = 0; bi < bbits; bi++) {
+                if (i >= w * h) break;
+                color rgb;
+                rgb.r = (ri * 255) / (rbits - 1);
+                rgb.g = (gi * 255) / (gbits - 1);
+                rgb.b = (bi * 255) / (bbits - 1);
+                img->pixels[i++] = rgb;
             }
-            color rgb=HSVtoRGB(hue,saturation,value);
-            rgb.r=quant(rgb.r,r);
-            rgb.g=quant(rgb.g,g);
-            rgb.b=quant(rgb.b,b);
-            img->pixels[y*w+x]=rgb;
         }
     }
-    
+    while (i < w * h) {
+        img->pixels[i++] = {0, 0, 0};
+    }
+
     return img;
 }
 
