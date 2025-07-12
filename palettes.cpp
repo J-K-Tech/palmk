@@ -1,5 +1,6 @@
 #include"bmp.h"
-
+#include"colormani.h"
+#include"raw.h"
 ImageRAW* genpalette(char r,char g,char b) {
     int cols=(1<<r)*(1<<g)*(1<<b);
     int w=(int)sqrt(cols*1.5);
